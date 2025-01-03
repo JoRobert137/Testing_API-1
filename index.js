@@ -34,14 +34,25 @@
 
 const express = require('express');
 const { resolve } = require('path');
+const students = require('./data.json')
 
 const app = express();
-const port = 3010;
+const port = 8080;
 
-app.use(express.static('static'));
+app.use(express.json());
 
 app.get('/', (req, res) => {
   res.sendFile(resolve(__dirname, 'pages/index.html'));
+});
+
+app.post('/students/above-threshold', (req, res)=>{
+  const { threshold } = req.body;
+
+  const filteredStudents = students.filter(student => student.total > threshold);
+  res.json({
+    count: filteredStudents.length,
+    students: filteredStudents
+  });
 });
 
 app.listen(port, () => {
